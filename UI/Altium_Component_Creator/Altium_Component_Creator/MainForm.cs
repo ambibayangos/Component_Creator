@@ -2,14 +2,21 @@ using Altium_Component_Creator.Data;
 using Altium_Component_Creator.Models;
 using Altium_Component_Creator.UI;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Channels;
 using System.Windows.Forms;
 
 namespace Altium_Component_Creator
 {
     public partial class MainForm : Form
     {
+
+        //List<Type> selectedTable = new List<Type>();
+        Dictionary<ComponentCategory,Type> databaseTableTypes = new Dictionary<ComponentCategory, Type>();
 
         #region Constructor
         public MainForm()
@@ -19,21 +26,19 @@ namespace Altium_Component_Creator
 
             // COMBO BOX
             set_comboBox_options();
+            set_table_types();
             // repopulate component view to selected component category in the UI
             categoryComboxBox.SelectedIndexChanged += populate_datagrid;
             // make resistor default category
             categoryComboxBox.SelectedIndex = (int)ComponentCategory.RESISTOR;
 
 
-            // Save changes made in cells to dB
+            // Save changes made in cells to dB whenerver editing on a cell is completed (e.g., when enter is prssed)
             databaseDatagridView.CellEndEdit += save_changes_to_cell;
         }
         #endregion
 
-        private void refresh_datagrid()
-        {
-            populate_datagrid(this, EventArgs.Empty);
-        }
+
 
         #region Private Methods
         private void populate_datagrid(object sender, EventArgs e)
@@ -66,11 +71,21 @@ namespace Altium_Component_Creator
             }
         }
 
+        private void refresh_datagrid()
+        {
+            populate_datagrid(this, EventArgs.Empty);
+        }
         private void set_comboBox_options()
         {
             string[] options = {ComponentCategory.RESISTOR.ToString(),
                                 ComponentCategory.CAPACITOR.ToString()};
             categoryComboxBox.Items.AddRange(options);
+        }
+
+        private void set_table_types()
+        {
+            databaseTableTypes.Add(ComponentCategory.RESISTOR, typeof(ResistorTable));
+            databaseTableTypes.Add(ComponentCategory.CAPACITOR, typeof(CapacitorTable));
         }
 
 
@@ -83,6 +98,15 @@ namespace Altium_Component_Creator
 
         private void deleteItemButton_Click(object sender, EventArgs e)
         {
+
+            DialogResult confirmResult = MessageBox.Show("Are you sure to delete this item ??",
+                                    "Confirm Delete!!",
+                                    MessageBoxButtons.YesNo);
+            if (confirmResult == DialogResult.No)
+            {
+                return;
+            }
+
             DataGridViewSelectedRowCollection selectedRows = databaseDatagridView.SelectedRows;
             foreach(DataGridViewRow row in selectedRows)
             {
@@ -116,12 +140,12 @@ namespace Altium_Component_Creator
 
         private void save_changes_to_cell(object sender, EventArgs e)
         {
-
             DataGridViewCell selectedCell = databaseDatagridView.CurrentCell;
 
             using (TestAltiumDBContext dB = new TestAltiumDBContext())
             {
                 ComponentCategory selectedCategory = (ComponentCategory)categoryComboxBox.SelectedIndex;
+
                 switch (selectedCategory)
                 {
                     case ComponentCategory.RESISTOR:
@@ -136,14 +160,15 @@ namespace Altium_Component_Creator
                                 DataGridViewRow currentRow = databaseDatagridView.CurrentRow;
                                 string partNumber = currentRow.Cells[0].Value.ToString();
 
-                                // seach database for item that matches partnumber and save changes to database
+                                // seach database for item that matches partnumber
                                 ResistorTable resistor = dB.ResistorTables.Where(i => i.PartNumber == partNumber).FirstOrDefault();
                                 property.SetValue(resistor, selectedCell.Value);
+                                //save changes to database
                                 dB.SaveChanges();
                                 break;
-                            } 
+                            }
                         }
-                        
+
                         break;
                     case ComponentCategory.CAPACITOR:
 
@@ -157,9 +182,10 @@ namespace Altium_Component_Creator
                                 DataGridViewRow currentRow = databaseDatagridView.CurrentRow;
                                 string partNumber = currentRow.Cells[0].Value.ToString();
 
-                                // seach database for item that matches partnumber and save changes to database
+                                // seach database for item that matches partnumber
                                 CapacitorTable resistor = dB.CapacitorTables.Where(i => i.PartNumber == partNumber).FirstOrDefault();
                                 property.SetValue(resistor, selectedCell.Value);
+                                // save changes to database
                                 dB.SaveChanges();
                                 break;
                             }
@@ -173,6 +199,7 @@ namespace Altium_Component_Creator
             refresh_datagrid();
         }
 
+
         #endregion
 
 
@@ -184,5 +211,6 @@ namespace Altium_Component_Creator
             CAPACITOR = 1
         }
         #endregion
+
     }
 }

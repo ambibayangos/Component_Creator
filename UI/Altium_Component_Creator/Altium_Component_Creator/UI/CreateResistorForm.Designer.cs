@@ -35,7 +35,6 @@
             valueLabel = new Label();
             valueTextBox = new TextBox();
             packageLabel = new Label();
-            packageTextBox = new TextBox();
             powerLabel = new Label();
             powerTextBox = new TextBox();
             voltageLabel = new Label();
@@ -57,13 +56,19 @@
             button1 = new Button();
             schematicPathTextBox = new TextBox();
             schematicPathLabel = new Label();
+            unitCombox = new ComboBox();
+            packageComboBox = new ComboBox();
+            powerCheckBox = new CheckBox();
+            datasheetCheckBox = new CheckBox();
+            voltageCheckBox = new CheckBox();
+            toleranceCheckBox = new CheckBox();
             SuspendLayout();
             // 
             // partNumberTextBox
             // 
-            partNumberTextBox.Location = new Point(27, 66);
+            partNumberTextBox.Location = new Point(28, 66);
             partNumberTextBox.Name = "partNumberTextBox";
-            partNumberTextBox.Size = new Size(220, 23);
+            partNumberTextBox.Size = new Size(219, 23);
             partNumberTextBox.TabIndex = 0;
             // 
             // partNumberLabel
@@ -77,9 +82,9 @@
             // 
             // manufacturerTextBox
             // 
-            manufacturerTextBox.Location = new Point(272, 66);
+            manufacturerTextBox.Location = new Point(270, 66);
             manufacturerTextBox.Name = "manufacturerTextBox";
-            manufacturerTextBox.Size = new Size(220, 23);
+            manufacturerTextBox.Size = new Size(222, 23);
             manufacturerTextBox.TabIndex = 26;
             // 
             // manufactuerLabel
@@ -102,9 +107,9 @@
             // 
             // valueTextBox
             // 
-            valueTextBox.Location = new Point(26, 121);
+            valueTextBox.Location = new Point(28, 121);
             valueTextBox.Name = "valueTextBox";
-            valueTextBox.Size = new Size(220, 23);
+            valueTextBox.Size = new Size(174, 23);
             valueTextBox.TabIndex = 2;
             // 
             // packageLabel
@@ -116,27 +121,20 @@
             packageLabel.TabIndex = 5;
             packageLabel.Text = "Package";
             // 
-            // packageTextBox
-            // 
-            packageTextBox.Location = new Point(26, 165);
-            packageTextBox.Name = "packageTextBox";
-            packageTextBox.Size = new Size(220, 23);
-            packageTextBox.TabIndex = 4;
-            // 
             // powerLabel
             // 
             powerLabel.AutoSize = true;
             powerLabel.Location = new Point(28, 204);
             powerLabel.Name = "powerLabel";
-            powerLabel.Size = new Size(40, 15);
+            powerLabel.Size = new Size(62, 15);
             powerLabel.TabIndex = 7;
-            powerLabel.Text = "Power";
+            powerLabel.Text = "Power (W)";
             // 
             // powerTextBox
             // 
-            powerTextBox.Location = new Point(26, 222);
+            powerTextBox.Location = new Point(28, 224);
             powerTextBox.Name = "powerTextBox";
-            powerTextBox.Size = new Size(219, 23);
+            powerTextBox.Size = new Size(174, 23);
             powerTextBox.TabIndex = 6;
             // 
             // voltageLabel
@@ -144,15 +142,15 @@
             voltageLabel.AutoSize = true;
             voltageLabel.Location = new Point(272, 147);
             voltageLabel.Name = "voltageLabel";
-            voltageLabel.Size = new Size(46, 15);
+            voltageLabel.Size = new Size(64, 15);
             voltageLabel.TabIndex = 9;
-            voltageLabel.Text = "Voltage";
+            voltageLabel.Text = "Voltage (V)";
             // 
             // voltageTextBox
             // 
             voltageTextBox.Location = new Point(271, 165);
             voltageTextBox.Name = "voltageTextBox";
-            voltageTextBox.Size = new Size(219, 23);
+            voltageTextBox.Size = new Size(172, 23);
             voltageTextBox.TabIndex = 8;
             // 
             // toleranceLabel
@@ -160,15 +158,15 @@
             toleranceLabel.AutoSize = true;
             toleranceLabel.Location = new Point(274, 103);
             toleranceLabel.Name = "toleranceLabel";
-            toleranceLabel.Size = new Size(57, 15);
+            toleranceLabel.Size = new Size(78, 15);
             toleranceLabel.TabIndex = 11;
-            toleranceLabel.Text = "Tolerance";
+            toleranceLabel.Text = "Tolerance (%)";
             // 
             // toleranceTextBox
             // 
-            toleranceTextBox.Location = new Point(272, 121);
+            toleranceTextBox.Location = new Point(270, 121);
             toleranceTextBox.Name = "toleranceTextBox";
-            toleranceTextBox.Size = new Size(220, 23);
+            toleranceTextBox.Size = new Size(173, 23);
             toleranceTextBox.TabIndex = 10;
             // 
             // footprintNameLabel
@@ -240,7 +238,7 @@
             // 
             datasheetPathTextBox.Location = new Point(271, 222);
             datasheetPathTextBox.Name = "datasheetPathTextBox";
-            datasheetPathTextBox.Size = new Size(218, 23);
+            datasheetPathTextBox.Size = new Size(172, 23);
             datasheetPathTextBox.TabIndex = 20;
             // 
             // label12
@@ -298,13 +296,75 @@
             schematicPathLabel.Size = new Size(89, 15);
             schematicPathLabel.TabIndex = 25;
             schematicPathLabel.Text = "Schematic Path";
-
+            // 
+            // unitCombox
+            // 
+            unitCombox.FormattingEnabled = true;
+            unitCombox.Location = new Point(200, 121);
+            unitCombox.Name = "unitCombox";
+            unitCombox.Size = new Size(47, 23);
+            unitCombox.TabIndex = 28;
+            // 
+            // packageComboBox
+            // 
+            packageComboBox.FormattingEnabled = true;
+            packageComboBox.Location = new Point(28, 165);
+            packageComboBox.Name = "packageComboBox";
+            packageComboBox.Size = new Size(219, 23);
+            packageComboBox.TabIndex = 29;
+            // 
+            // powerCheckBox
+            // 
+            powerCheckBox.AutoSize = true;
+            powerCheckBox.Location = new Point(208, 228);
+            powerCheckBox.Name = "powerCheckBox";
+            powerCheckBox.Size = new Size(43, 19);
+            powerCheckBox.TabIndex = 30;
+            powerCheckBox.Text = "NA";
+            powerCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // datasheetCheckBox
+            // 
+            datasheetCheckBox.AutoSize = true;
+            datasheetCheckBox.Location = new Point(448, 228);
+            datasheetCheckBox.Name = "datasheetCheckBox";
+            datasheetCheckBox.Size = new Size(43, 19);
+            datasheetCheckBox.TabIndex = 31;
+            datasheetCheckBox.Text = "NA";
+            datasheetCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // voltageCheckBox
+            // 
+            voltageCheckBox.AutoSize = true;
+            voltageCheckBox.Location = new Point(448, 169);
+            voltageCheckBox.Name = "voltageCheckBox";
+            voltageCheckBox.Size = new Size(43, 19);
+            voltageCheckBox.TabIndex = 32;
+            voltageCheckBox.Text = "NA";
+            voltageCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // toleranceCheckBox
+            // 
+            toleranceCheckBox.AutoSize = true;
+            toleranceCheckBox.Location = new Point(448, 125);
+            toleranceCheckBox.Name = "toleranceCheckBox";
+            toleranceCheckBox.Size = new Size(43, 19);
+            toleranceCheckBox.TabIndex = 33;
+            toleranceCheckBox.Text = "NA";
+            toleranceCheckBox.UseVisualStyleBackColor = true;
             // 
             // CreateResistorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
             ClientSize = new Size(522, 513);
+            Controls.Add(toleranceCheckBox);
+            Controls.Add(voltageCheckBox);
+            Controls.Add(datasheetCheckBox);
+            Controls.Add(powerCheckBox);
+            Controls.Add(packageComboBox);
+            Controls.Add(unitCombox);
             Controls.Add(manufactuerLabel);
             Controls.Add(manufacturerTextBox);
             Controls.Add(schematicPathLabel);
@@ -329,7 +389,6 @@
             Controls.Add(powerLabel);
             Controls.Add(powerTextBox);
             Controls.Add(packageLabel);
-            Controls.Add(packageTextBox);
             Controls.Add(valueLabel);
             Controls.Add(valueTextBox);
             Controls.Add(partNumberLabel);
@@ -347,7 +406,6 @@
         private Label valueLabel;
         private TextBox valueTextBox;
         private Label packageLabel;
-        private TextBox packageTextBox;
         private Label powerLabel;
         private TextBox powerTextBox;
         private Label voltageLabel;
@@ -371,5 +429,11 @@
         private Label schematicPathLabel;
         private TextBox manufacturerTextBox;
         private Label manufactuerLabel;
+        private ComboBox unitCombox;
+        private ComboBox packageComboBox;
+        private CheckBox powerCheckBox;
+        private CheckBox datasheetCheckBox;
+        private CheckBox voltageCheckBox;
+        private CheckBox toleranceCheckBox;
     }
 }

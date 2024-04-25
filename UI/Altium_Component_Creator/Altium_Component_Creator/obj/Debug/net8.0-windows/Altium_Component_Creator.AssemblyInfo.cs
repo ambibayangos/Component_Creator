@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Altium_Component_Creator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b3f8d2a0ec93dd5178c9014229e3487e8076598")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e247a7508739d9b5b8369e3bc66c2aede5cae2a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Altium_Component_Creator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Altium_Component_Creator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

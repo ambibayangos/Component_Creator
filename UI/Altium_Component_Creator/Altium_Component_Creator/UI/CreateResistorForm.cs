@@ -1,6 +1,7 @@
 ﻿using Altium_Component_Creator.Data;
 using Altium_Component_Creator.Models;
 using Microsoft.IdentityModel.Tokens;
+using System.Xml.Linq;
 
 namespace Altium_Component_Creator.UI
 {
@@ -10,6 +11,12 @@ namespace Altium_Component_Creator.UI
         {
             InitializeComponent();
             set_tab_order();
+            initilize_comboxes();
+
+            toleranceCheckBox.CheckedChanged += check_NA_fields;
+            powerCheckBox.CheckedChanged += check_NA_fields;
+            voltageCheckBox.CheckedChanged += check_NA_fields;
+            datasheetCheckBox.CheckedChanged += check_NA_fields;
         }
 
 
@@ -21,26 +28,28 @@ namespace Altium_Component_Creator.UI
             partNumberTextBox.TabIndex = 0;
             manufacturerTextBox.TabIndex = 1;
             valueTextBox.TabIndex = 2;
-            toleranceTextBox.TabIndex = 3;
-            packageTextBox.TabIndex = 4;
-            voltageTextBox.TabIndex = 5;
-            powerTextBox.TabIndex = 6;
-            datasheetPathTextBox.TabIndex = 7;
-            footprintNameTextBox.TabIndex = 8;
-            footprintPathTextBox.TabIndex = 9;
-            schematicSymbolTextBox.TabIndex = 10;
-            schematicPathTextBox.TabIndex = 11;
+            unitCombox.TabIndex = 3;
+            toleranceTextBox.TabIndex = 4;
+            packageComboBox.TabIndex = 6;
+            voltageTextBox.TabIndex = 7;
+            powerTextBox.TabIndex = 8;
+            datasheetPathTextBox.TabIndex = 9;
+            footprintNameTextBox.TabIndex = 10;
+            footprintPathTextBox.TabIndex = 11;
+            schematicSymbolTextBox.TabIndex = 12;
+            schematicPathTextBox.TabIndex = 13;
         }
 
         private void create_button_clicked(object sender, EventArgs e)
         {
             // validate 
             if (partNumberTextBox.Text.IsNullOrEmpty() || valueTextBox.Text.IsNullOrEmpty() ||
-                packageTextBox.Text.IsNullOrEmpty() || manufacturerTextBox.Text.IsNullOrEmpty())
+                manufacturerTextBox.Text.IsNullOrEmpty())
             {
                 MessageBox.Show("Part Number, Value, Package and Manufacturer can't be empty!");
                 return;
             }
+
 
             //validate
             double power, voltage, tolerance;
@@ -50,7 +59,9 @@ namespace Altium_Component_Creator.UI
             validPower = double.TryParse(powerTextBox.Text, out power);
             validVoltage = double.TryParse(voltageTextBox.Text, out voltage);
             validTolerance = double.TryParse(toleranceTextBox.Text, out tolerance);
-            if (!validPower || !validVoltage || !validTolerance)
+            if ((!validPower        && !powerCheckBox.Checked)    || 
+                (!validVoltage      && !voltageCheckBox.Checked)   ||  
+                (!validTolerance    && !toleranceCheckBox.Checked))
             {   
                 MessageBox.Show("Invalid power,voltage,or tolerance input. Please enter numeric value only!");
                 return;
@@ -60,21 +71,50 @@ namespace Altium_Component_Creator.UI
             ResistorTable newResistor = new ResistorTable()
             {
                 PartNumber = partNumberTextBox.Text,
-                Value = valueTextBox.Text,
-                Package = packageTextBox.Text,
-                Power = power,
-                Voltage = voltage,
-                Tolerance = tolerance,
+                Value = valueTextBox.Text + unitCombox.SelectedItem.ToString(),
+                Package = packageComboBox.SelectedItem.ToString(),
+                Power = powerCheckBox.Checked ? null : power,
+                Voltage = voltageCheckBox.Checked ? null : voltage,
+                Tolerance = toleranceCheckBox.Checked ? null : tolerance,
                 Manufacturer = manufacturerTextBox.Text,
                 FoorprintRef = footprintNameTextBox.Text,
                 FootprintPath = footprintPathTextBox.Text,
                 LibraryRef = schematicSymbolTextBox.Text,
                 LibraryPath = schematicPathTextBox.Text,
                 ComponentLink1Description = "Datasheet",
-                ComponentLink1Url = datasheetPathTextBox.Text
+                ComponentLink1Url = datasheetCheckBox.Checked ? null : datasheetPathTextBox.Text
             };
-            // Create description in following formnat "RES_{VALUE}_{PAKCAGE}_{Power}W_{Tolerance}%_{VOLTAGE}V"
-            newResistor.Description = $"RES_{newResistor.Value}_{newResistor.Package}_{newResistor.Power}W_{newResistor.Tolerance}%_{newResistor.Voltage}V";
+
+
+            // Create description
+            string description = "RES";
+            string[] desriptionElements = { newResistor.Value , newResistor.Power.ToString() , newResistor.Tolerance.ToString(), newResistor.Voltage.ToString()};
+            for(int i = 0; i < desriptionElements.Length; i++)
+            {
+                if (!desriptionElements[i].IsNullOrEmpty())
+                {
+                    if (i == 0)
+                    {
+                        description += $"_{desriptionElements[i]}";
+                    }
+
+                    if (i == 1)
+                    {
+                        description += $"_{desriptionElements[i]}W";
+                    }
+
+                    if (i == 2)
+                    {
+                        description += $"_{desriptionElements[i]}%";
+                    }
+
+                    if (i == 3)
+                    {
+                        description += $"_{desriptionElements[i]}V";
+                    }
+                }
+            }
+            newResistor.Description = description;
 
 
             using (TestAltiumDBContext db = new TestAltiumDBContext())
@@ -100,5 +140,60 @@ namespace Altium_Component_Creator.UI
             this.Close(); // close the add resistor form
         }
 
+
+        private void initilize_comboxes()
+        {   
+            string[] unitOptions = {"R","K","M"};
+            unitCombox.Items.AddRange(unitOptions);
+            // set the default unit to "R" which is index "0"
+            unitCombox.SelectedIndex = 0;
+
+            string[] packageOptions = {"0201", "0402", "0603", "0805", "1210","TH"};
+            packageComboBox.Items.AddRange(packageOptions);
+            // set the default unit to "0603" which is index "0"
+            packageComboBox.SelectedIndex = 2;
+        }
+
+
+        private void check_NA_fields(object sender, EventArgs e)
+        {
+            if (toleranceCheckBox.Checked)
+            {
+                toleranceTextBox.Enabled = false;
+            }
+            else
+            {
+                toleranceTextBox.Enabled = true;
+            }
+
+
+            if (powerCheckBox.Checked)
+            {
+                powerTextBox.Enabled = false;
+            }
+            else
+            {
+                powerTextBox.Enabled = true;
+            }
+
+
+            if (voltageCheckBox.Checked)
+            {
+                voltageTextBox.Enabled = false;
+            }
+            else
+            {
+                voltageTextBox.Enabled = true;
+            }
+
+            if (datasheetCheckBox.Checked)
+            {
+                datasheetPathTextBox.Enabled = false;
+            }
+            else
+            {
+                datasheetPathTextBox.Enabled = true;
+            }
+        }
     }
 }
